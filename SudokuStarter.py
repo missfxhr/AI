@@ -431,6 +431,7 @@ def solveMRV(board, forward_checking,LCV,count):
 
 
 def solveMCV(board, forward_checking,LCV,count):
+    print str(count) + "\r",
     size = board.BoardSize
     maxCon = 0
     subsize = int(math.sqrt(size))
@@ -455,6 +456,7 @@ def solveMCV(board, forward_checking,LCV,count):
         maxRow = forwardTable[(row,col)][0]
         maxCol = forwardTable[(row,col)][1]
         maxCon = 1
+
     if maxCon == 0:
         board.print_board()
         return True
@@ -513,4 +515,5 @@ def solveMCV(board, forward_checking,LCV,count):
                     board.setCell(x,maxRow,maxCol,False)
                     board.updateCellList(maxRow,maxCol)
             return False
+
 
