@@ -434,23 +434,26 @@ def solveMCV(board, p_row, p_col,forward_checking,LCV,count):
     print str(count) + "\r",
     size = board.BoardSize
     maxCon = 0
+    maxRow = -1
+    maxCol = -1
     subsize = int(math.sqrt(size))
     if board.forwardTable[(p_row,p_col)] == (-1,-1):
         for row in range(0, size): 
             for col in range(0, size):
-                tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
-                gridRowNum = (row//subsize)*subsize
-                gridColNum = (col//subsize)*subsize
-                for gridR in range(subsize):
-                    if board.CurrentGameBoard[gridR+gridRowNum][col] == 0:
-                        tempCon -= 1
-                for gridC in range(subsize):
-                    if board.CurrentGameBoard[row][gridC+gridColNum] == 0:
-                        tempCon -= 1
-                if board.CurrentGameBoard[row][col] == 0 and  tempCon > maxCon:
-                    maxCon = tempCon
-                    maxRow = row
-                    maxCol = col
+                if board.CurrentGameBoard[row][col] == 0:
+                    tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
+                    gridRowNum = (row//subsize)*subsize
+                    gridColNum = (col//subsize)*subsize
+                    for gridR in range(subsize):
+                        if board.CurrentGameBoard[gridR+gridRowNum][col] == 0:
+                            tempCon -= 1
+                    for gridC in range(subsize):
+                        if board.CurrentGameBoard[row][gridC+gridColNum] == 0:
+                            tempCon -= 1
+                    if tempCon > maxCon:
+                        maxCon = tempCon
+                        maxRow = row
+                        maxCol = col
         board.forwardTable[(p_row,p_col)] = (maxRow,maxCol)
     else:
         maxRow = board.forwardTable[(p_row,p_col)][0]
