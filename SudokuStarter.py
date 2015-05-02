@@ -278,9 +278,11 @@ def solve(initial_board, forward_checking = False, MRV = False, MCV = False, LCV
 		solveSimple(initial_board,0,0,forward_checking,LCV,count)
 		print count[0]
 	elif MRV == True and MCV == False:
-		solveMRV(initial_board,forward_checking,LCV)
+		solveMRV(initial_board,forward_checking,LCV,count)
+		print count[0]
 	elif MRV == False and MCV == True:
-		solveMCV(initial_board,forward_checking,LCV)
+		solveMCV(initial_board,forward_checking,LCV,count)
+		print count[0]
 	else:
 		print "MRV and MCV cannot be True at the same time!"
 
@@ -291,7 +293,7 @@ def solve(initial_board, forward_checking = False, MRV = False, MCV = False, LCV
 
 
 def solveSimple(board,row,col,forward_checking,LCV, count):
-	count[0] += 1
+	#count[0] += 1
 	size = board.BoardSize
 	subsize = board.BoardSubSize
 	if row==size:
@@ -301,6 +303,7 @@ def solveSimple(board,row,col,forward_checking,LCV, count):
 		if board.CurrentGameBoard[row][col] == 0: 
 			if not LCV:
 				for x in range(1,size+1):
+					count[0] += 1
 					if not (x in board.rowSet[row] or x in board.colSet[col] or x in board.gridSet[(row//subsize,col//subsize)]):
 						board.setCell(x,row,col,True)
 						if solveSimple(board,row+(col+1)//size,(col+1)%size,forward_checking,LCV,count):
@@ -311,6 +314,7 @@ def solveSimple(board,row,col,forward_checking,LCV, count):
 			else:
 				pairedNumbers = board.generatePairedLegalNumbers(row,col,forward_checking)
 				while(pairedNumbers):
+					count[0] += 1
 					x = (heapq.heappop(pairedNumbers))[1]
 					board.setCell(x,row,col,True)
 					if solveSimple(board,row+(col+1)//size,(col+1)%size,forward_checking,LCV,count):
@@ -325,6 +329,7 @@ def solveSimple(board,row,col,forward_checking,LCV, count):
 			if not LCV:
 				legalNumbers = set(board.cellList[(row,col)])
 				for x in legalNumbers:
+					count[0] += 1
 					board.setCell(x,row,col,True)
 					if board.updateCellList(row,col) and solveSimple(board,row+(col+1)//size,(col+1)%size,forward_checking,LCV,count):
 							return True
@@ -335,6 +340,7 @@ def solveSimple(board,row,col,forward_checking,LCV, count):
 			else:
 				pairedNumbers = board.generatePairedLegalNumbers(row,col,forward_checking)
 				while(pairedNumbers):
+					count[0] += 1
 					x = (heapq.heappop(pairedNumbers))[1]
 					board.setCell(x,row,col,True)
 					if board.updateCellList(row,col) and solveSimple(board,row+(col+1)//size,(col+1)%size,forward_checking,LCV,count):
@@ -347,7 +353,7 @@ def solveSimple(board,row,col,forward_checking,LCV, count):
 			return solveSimple(board,row+(col+1)//size,(col+1)%size,forward_checking,LCV,count)
 
 
-def solveMRV(board, forward_checking,LCV):
+def solveMRV(board, forward_checking,LCV,count):
 	size = board.BoardSize
 	minLen = size
 	subsize = board.BoardSubSize
@@ -364,9 +370,10 @@ def solveMRV(board, forward_checking,LCV):
 			return True
 		if not LCV:
 			for x in range(1,size+1):
+				count[0] += 1
 				if not (x in board.rowSet[minRow] or x in board.colSet[minCol] or x in board.gridSet[(minRow//subsize,minCol//subsize)]): 
 					board.setCell(x,minRow,minCol,True)
-					if solveMRV(board, forward_checking,LCV):
+					if solveMRV(board, forward_checking,LCV,count):
 						return True
 					else:
 						board.setCell(x,minRow,minCol,False)
@@ -374,9 +381,10 @@ def solveMRV(board, forward_checking,LCV):
 		else:
 			pairedNumbers = board.generatePairedLegalNumbers(minRow,minCol,forward_checking)
 			while(pairedNumbers):
+				count[0] += 1
 				x = (heapq.heappop(pairedNumbers))[1]
 				board.setCell(x,minRow,minCol,True)
-				if solveMRV(board,forward_checking,LCV):
+				if solveMRV(board,forward_checking,LCV,count):
 					return True
 				else:
 					board.setCell(x,minRow,minCol,False)
@@ -394,8 +402,9 @@ def solveMRV(board, forward_checking,LCV):
 		if not LCV:
 			legalNumbers = set(board.cellList[(minRow,minCol)])
 			for x in legalNumbers:
+				count[0] += 1
 				board.setCell(x,minRow,minCol,True)
-				if board.updateCellList(minRow,minCol) and solveMRV(board, forward_checking,LCV):
+				if board.updateCellList(minRow,minCol) and solveMRV(board, forward_checking,LCV,count):
 					return True
 				else:
 					board.setCell(x,minRow,minCol,False)
@@ -404,9 +413,10 @@ def solveMRV(board, forward_checking,LCV):
 		else:
 			pairedNumbers = board.generatePairedLegalNumbers(minRow,minCol,forward_checking)
 			while(pairedNumbers):
+				count[0] += 1
 				x = (heapq.heappop(pairedNumbers))[1]
 				board.setCell(x,minRow,minCol,True)
-				if board.updateCellList(minRow,minCol) and solveMRV(board,forward_checking,LCV):
+				if board.updateCellList(minRow,minCol) and solveMRV(board,forward_checking,LCV,count):
 					return True
 				else:
 					board.setCell(x,minRow,minCol,False)
@@ -414,7 +424,7 @@ def solveMRV(board, forward_checking,LCV):
 			return False			
 
 
-def solveMCV(board, forward_checking,LCV):
+def solveMCV(board, forward_checking,LCV,count):
 	size = board.BoardSize
 	maxCon = 0
 	subsize = int(math.sqrt(size))
@@ -430,9 +440,10 @@ def solveMCV(board, forward_checking,LCV):
 			return True
 		if not LCV:
 			for x in range(1,size+1):
+				count[0] += 1
 				if not (x in board.rowSet[maxRow] or x in board.colSet[maxCol] or x in board.gridSet[(maxRow//subsize,maxCol//subsize)]): 
 					board.setCell(x,maxRow,maxCol,True)
-					if solveMRV(board, forward_checking, LCV):
+					if solveMCV(board, forward_checking, LCV,count):
 						return True
 					else:
 						board.setCell(x,maxRow,maxCol,False)
@@ -440,9 +451,10 @@ def solveMCV(board, forward_checking,LCV):
 		else:
 			pairedNumbers = board.generatePairedLegalNumbers(maxRow,maxCol,forward_checking)
 			while(pairedNumbers):
+				count[0] += 1
 				x = (heapq.heappop(pairedNumbers))[1]			
 				board.setCell(x,maxRow,maxCol,True)
-				if solveMRV(board, forward_checking, LCV):
+				if solveMCV(board, forward_checking, LCV,count):
 					return True
 				else:
 					board.setCell(x,maxRow,maxCol,False)
@@ -460,8 +472,9 @@ def solveMCV(board, forward_checking,LCV):
 		if not LCV:
 			legalNumbers = set(board.cellList[(maxRow,maxCol)])
 			for x in legalNumbers:
+				count[0] += 1
 				board.setCell(x,maxRow,maxCol,True)
-				if board.updateCellList(maxRow,maxCol) and solveMRV(board, forward_checking, LCV):
+				if board.updateCellList(maxRow,maxCol) and solveMCV(board, forward_checking, LCV,count):
 					return True
 				else:
 					board.setCell(x,maxRow,maxCol,False)
@@ -470,9 +483,10 @@ def solveMCV(board, forward_checking,LCV):
 		else:
 			pairedNumbers = board.generatePairedLegalNumbers(maxRow,maxCol,forward_checking)
 			while(pairedNumbers):
+				count[0] += 1
 				x = (heapq.heappop(pairedNumbers))[1]			
 				board.setCell(x,maxRow,maxCol,True)
-				if board.updateCellList(maxRow,maxCol) and solveMRV(board, forward_checking, LCV):
+				if board.updateCellList(maxRow,maxCol) and solveMCV(board, forward_checking, LCV,count):
 					return True
 				else:
 					board.setCell(x,maxRow,maxCol,False)
