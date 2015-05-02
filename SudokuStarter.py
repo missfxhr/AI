@@ -15,6 +15,12 @@ class SudokuBoard:
         self.colSet = {i:set() for i in range(size)}
         self.gridSet = {(i,j):set() for i in range(subsize) for j in range(subsize)}
         self.cellList = {(i,j):set() for i in range(size) for j in range(size)}
+        #forward table initialization
+        self.forwardTable = {(i,j):list() for i in range(size) for j in range(size)}
+        for row in range(size):
+            for col in range(size): 
+                self.forwardTable[(row,col)] = (-1,-1)
+
         for x in range(1,size+1):
             self.fullSet.add(x)
         for row in range(size):
@@ -428,21 +434,27 @@ def solveMCV(board, forward_checking,LCV,count):
     size = board.BoardSize
     maxCon = 0
     subsize = int(math.sqrt(size))
-    for row in range(0, size): 
-        for col in range(0, size):
-            tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
-            gridRowNum = (row//subsize)*subsize
-            gridColNum = (col//subsize)*subsize
-            for gridR in range(subsize):
-                if board.CurrentGameBoard[gridR+gridRowNum][col] == 0:
-                    tempCon -= 1
-            for gridC in range(subsize):
-                if board.CurrentGameBoard[row][gridC+gridColNum] == 0:
-                    tempCon -= 1
-            if board.CurrentGameBoard[row][col] == 0 and  tempCon > maxCon:
-                maxCon = tempCon
-                maxRow = row
-                maxCol = col
+    if board.forwardTable[(row,col)] == (-1,-1):
+        for row in range(0, size): 
+            for col in range(0, size):
+                tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
+                gridRowNum = (row//subsize)*subsize
+                gridColNum = (col//subsize)*subsize
+                for gridR in range(subsize):
+                    if board.CurrentGameBoard[gridR+gridRowNum][col] == 0:
+                        tempCon -= 1
+                for gridC in range(subsize):
+                    if board.CurrentGameBoard[row][gridC+gridColNum] == 0:
+                        tempCon -= 1
+                if board.CurrentGameBoard[row][col] == 0 and  tempCon > maxCon:
+                    maxCon = tempCon
+                    maxRow = row
+                    maxCol = col
+        forwardTable[(row,col)] = (maxRow,maxCol)
+    else:
+        maxRow = forwardTable[(row,col)][0]
+        maxCol = forwardTable[(row,col)][1]
+        maxCon = 1
     if maxCon == 0:
         board.print_board()
         return True
