@@ -425,11 +425,15 @@ def solveMRV(board, forward_checking,LCV,count):
 
 
 def solveMCV(board, forward_checking,LCV,count):
+    print str(count) + "\r",
     size = board.BoardSize
     maxCon = 0
     subsize = int(math.sqrt(size))
     for row in range(0, size): 
         for col in range(0, size):
+            #print str(board.CurrentGameBoard[row][col]) + " ",
+
+
             tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
             gridRowNum = (row//subsize)*subsize
             gridColNum = (col//subsize)*subsize
@@ -501,4 +505,5 @@ def solveMCV(board, forward_checking,LCV,count):
                     board.setCell(x,maxRow,maxCol,False)
                     board.updateCellList(maxRow,maxCol)
             return False
+
 
