@@ -433,11 +433,11 @@ def solveMCV(board, forward_checking,LCV,count):
             tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
             gridRowNum = (row//subsize)*subsize
             gridColNum = (col//subsize)*subsize
-            for gridR in range subsize:
-                if CurrentGameBoard[gridR+gridRowNum][col] == 0:
+            for gridR in range(subsize):
+                if board.CurrentGameBoard[gridR+gridRowNum][col] == 0:
                     tempCon -= 1
-            for gridC in range subsize:
-                if CurrentGameBoard[row][gridC+gridColNum] == 0:
+            for gridC in range(subsize):
+                if board.CurrentGameBoard[row][gridC+gridColNum] == 0:
                     tempCon -= 1
             if board.CurrentGameBoard[row][col] == 0 and  tempCon > maxCon:
                 maxCon = tempCon
