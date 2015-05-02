@@ -287,7 +287,7 @@ def solve(initial_board, forward_checking = False, MRV = False, MCV = False, LCV
         solveMRV(initial_board,forward_checking,LCV,count)
         print count[0]
     elif MRV == False and MCV == True:
-        solveMCV(initial_board,forward_checking,LCV,count)
+        solveMCV(initial_board,0,0,forward_checking,LCV,count)
         print count[0]
     else:
         print "MRV and MCV cannot be True at the same time!"
@@ -430,12 +430,12 @@ def solveMRV(board, forward_checking,LCV,count):
             return False            
 
 
-def solveMCV(board, forward_checking,LCV,count):
+def solveMCV(board, p_row, p_col,forward_checking,LCV,count):
     print str(count) + "\r",
     size = board.BoardSize
     maxCon = 0
     subsize = int(math.sqrt(size))
-    if board.forwardTable[(row,col)] == (-1,-1):
+    if board.forwardTable[(p_row,p_col)] == (-1,-1):
         for row in range(0, size): 
             for col in range(0, size):
                 tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
@@ -451,10 +451,10 @@ def solveMCV(board, forward_checking,LCV,count):
                     maxCon = tempCon
                     maxRow = row
                     maxCol = col
-        forwardTable[(row,col)] = (maxRow,maxCol)
+        board.forwardTable[(p_row,p_col)] = (maxRow,maxCol)
     else:
-        maxRow = forwardTable[(row,col)][0]
-        maxCol = forwardTable[(row,col)][1]
+        maxRow = board.forwardTable[(p_row,p_col)][0]
+        maxCol = board.forwardTable[(p_row,p_col)][1]
         maxCon = 1
 
     if maxCon == 0:
@@ -468,7 +468,7 @@ def solveMCV(board, forward_checking,LCV,count):
                 if not (x in board.rowSet[maxRow] or x in board.colSet[maxCol] or x in board.gridSet[(maxRow//subsize,maxCol//subsize)]): 
                     board.setCell(x,maxRow,maxCol,True)
 
-                    if solveMCV(board, forward_checking, LCV,count):
+                    if solveMCV(board,maxRow,maxCol, forward_checking, LCV,count):
 
                         return True
                     else:
@@ -481,7 +481,7 @@ def solveMCV(board, forward_checking,LCV,count):
                 x = (heapq.heappop(pairedNumbers))[1]           
                 board.setCell(x,maxRow,maxCol,True)
 
-                if solveMCV(board, forward_checking, LCV,count):
+                if solveMCV(board,maxRow,maxCol, forward_checking, LCV,count):
 
                     return True
                 else:
@@ -494,7 +494,7 @@ def solveMCV(board, forward_checking,LCV,count):
                 count[0] += 1
                 board.setCell(x,maxRow,maxCol,True)
 
-                if board.updateCellList(maxRow,maxCol) and solveMCV(board, forward_checking, LCV,count):
+                if board.updateCellList(maxRow,maxCol) and solveMCV(board, maxRow,maxCol,forward_checking, LCV,count):
 
                     return True
                 else:
@@ -508,7 +508,7 @@ def solveMCV(board, forward_checking,LCV,count):
                 x = (heapq.heappop(pairedNumbers))[1]           
                 board.setCell(x,maxRow,maxCol,True)
 
-                if board.updateCellList(maxRow,maxCol) and solveMCV(board, forward_checking, LCV,count):
+                if board.updateCellList(maxRow,maxCol) and solveMCV(board,maxRow,maxCol, forward_checking, LCV,count):
 
                     return True
                 else:
