@@ -428,16 +428,26 @@ def solveMCV(board, forward_checking,LCV,count):
 	size = board.BoardSize
 	maxCon = 0
 	subsize = int(math.sqrt(size))
-	if forward_checking != True:
-		for row in range(0, size): 
-			for col in range(0, size):
-				if board.CurrentGameBoard[row][col] == 0 and  3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)]) > maxCon:
-					maxCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
-					maxRow = row
-					maxCol = col
-		if maxCon == 0:
-			board.print_board()
-			return True
+	for row in range(0, size): 
+		for col in range(0, size):
+			tempCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
+			gridRowNum = (row//subsize)*subsize
+		    gridColNum = (col//subsize)*subsize
+			for gridR in range subsize:
+				if CurrentGameBoard[gridR][col] == 0:
+					tempCon -= 1
+			for gridC in range subsize:
+				if CurrentGameBoard[row][gridC] == 0:
+					tempCon -= 1
+			if board.CurrentGameBoard[row][col] == 0 and  tempCon > maxCon:
+				maxCon = tempCon
+				maxRow = row
+				maxCol = col
+	if maxCon == 0:
+		board.print_board()
+		return True
+
+	if forward_checking != True:		
 		if not LCV:
 			for x in range(1,size+1):
 				count[0] += 1
@@ -464,15 +474,6 @@ def solveMCV(board, forward_checking,LCV,count):
 					board.setCell(x,maxRow,maxCol,False)
 			return False
 	else:
-		for row in range(0, size): 
-			for col in range(0, size):
-				if board.CurrentGameBoard[row][col] == 0 and  3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)]) > maxCon:
-					maxCon = 3 * size - len(board.rowSet[row]) - len(board.colSet[col]) - len(board.gridSet[(row//subsize,col//subsize)])
-					maxRow = row
-					maxCol = col
-		if maxCon == 0:
-			board.print_board()
-			return True
 		if not LCV:
 			legalNumbers = set(board.cellList[(maxRow,maxCol)])
 			for x in legalNumbers:
