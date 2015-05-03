@@ -300,10 +300,11 @@ def solve(initial_board, forward_checking = False, MRV = False, MCV = False, LCV
 
 def solveSimple(board,row,col,forward_checking,LCV, count):
     #count[0] += 1
+    print str(count) + "\r",
     size = board.BoardSize
     subsize = board.BoardSubSize
     if row==size:
-        board.print_board()
+        #board.print_board()
         return True
     if not forward_checking:
         if board.CurrentGameBoard[row][col] == 0: 
@@ -360,6 +361,7 @@ def solveSimple(board,row,col,forward_checking,LCV, count):
 
 
 def solveMRV(board, forward_checking,LCV,count):
+    print str(count) + "\r",
     size = board.BoardSize
     minLen = size
     subsize = board.BoardSubSize
@@ -372,7 +374,7 @@ def solveMRV(board, forward_checking,LCV,count):
                     minRow = row
                     minCol = col
         if minLen == size:
-            board.print_board()
+            #board.print_board()
             return True
         if not LCV:
             for x in range(1,size+1):
@@ -403,7 +405,7 @@ def solveMRV(board, forward_checking,LCV,count):
                     minRow = row
                     minCol = col
         if minLen == size:
-            board.print_board()
+            #board.print_board()
             return True
         if not LCV:
             legalNumbers = set(board.cellList[(minRow,minCol)])
@@ -461,7 +463,7 @@ def solveMCV(board, p_row, p_col,forward_checking,LCV,count):
         maxCon = 1
 
     if maxCon == 0:
-        board.print_board()
+        #board.print_board()
         return True
 
     if forward_checking != True:
